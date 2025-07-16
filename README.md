@@ -7,7 +7,7 @@ This project implements a real-time hospital bed monitoring system using OpenCV,
 🚀 Features
 Real-Time Hand Detection → Tracks motion to detect wiping action.
 
-YOLO Object Detection → Identifies unnecessary objects on the bed.
+YOLO Object Detection → Identifies unnecessary objects on the bed. YOLO V8 is upgraded version
 
 Cleanliness Analysis → Measures the cleanliness of the bed based on pixel thresholds.
 
