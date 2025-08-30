@@ -1,1 +1,44 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanitTrack - Hospital Bed Monitoring</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>SanitTrack - Hospital Bed Monitoring</h1>
+        
+        <div class="alert-banner" id="alert-banner">
+            Alert: Low cleanliness detected! An email notification has been sent.
+        </div>
+        
+        <div class="camera-container">
+            <video id="webcam" autoplay playsinline></video>
+            <canvas id="output"></canvas>
+        </div>
+        
+        <div class="status-container">
+            <div id="status">Status: <span id="clean-status">🚨 NEEDS CLEANING</span></div>
+            <div id="last-cleaned">Last cleaned: <span id="clean-time">Never</span></div>
+            <div id="cleanliness">Cleanliness: <span id="clean-percent">0%</span></div>
+        </div>
+        
+        <div class="objects-container">
+            <h3>Detected Objects:</h3>
+            <ul id="object-list"></ul>
+        </div>
+        
+        <button id="report-btn">Send Manual Email Report</button>
+    </div>
+</body>
+</html>
