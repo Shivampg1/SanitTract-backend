@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SanitTrack - Hospital Bed Monitoring</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -40,5 +42,15 @@
         
         <button id="report-btn">Send Manual Email Report</button>
     </div>
+    <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("service-worker.js")
+        .then((reg) => console.log("Service Worker registered:", reg))
+        .catch((err) => console.error("Service Worker failed:", err));
+    });
+  }
+</script>
 </body>
 </html>
