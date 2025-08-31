@@ -20,6 +20,15 @@ const objectList = document.getElementById('object-list');
 const reportBtn = document.getElementById('report-btn');
 const alertBanner = document.getElementById('alert-banner');
 
+// Chatbot Elements
+const chatbotButton = document.getElementById('chatbot-button');
+const chatWindow = document.getElementById('chat-window');
+const chatMessages = document.getElementById('chat-messages');
+const userInput = document.getElementById('user-input');
+const sendMessageBtn = document.getElementById('send-message');
+const closeChatBtn = document.getElementById('close-chat');
+const suggestionChips = document.getElementById('suggestion-chips');
+
 // State variables
 let seatStatus = "🚨 NEEDS CLEANING";
 let lastCleaned = "Never";
@@ -32,6 +41,50 @@ let lastAlertSent = 0;
 let model = null;
 let lastPositions = []; // For tracking hand movement history
 
+// Hospital Data (Sample Data - You can replace with real data from your backend)
+const hospitalData = {
+    beds: {
+        total: 150,
+        available: 42,
+        occupied: 108,
+        icu: {
+            total: 24,
+            available: 8,
+            occupied: 16
+        },
+        emergency: {
+            total: 18,
+            available: 5,
+            occupied: 13
+        }
+    },
+    doctors: {
+        total: 56,
+        available: 32,
+        departments: {
+            "Cardiology": {total: 8, available: 5},
+            "Neurology": {total: 6, available: 4},
+            "Pediatrics": {total: 10, available: 6},
+            "Orthopedics": {total: 7, available: 4},
+            "Emergency": {total: 12, available: 9},
+            "Surgery": {total: 13, available: 4}
+        }
+    },
+    medicine: {
+        inStock: 1245,
+        critical: [
+            {name: "Insulin", stock: "Adequate"},
+            {name: "Paracetamol", stock: "Adequate"},
+            {name: "Amoxicillin", stock: "Low"},
+            {name: "Salbutamol", stock: "Adequate"}
+        ],
+        lowStock: [
+            {name: "Morphine", stock: "Very Low"},
+            {name: "Propofol", stock: "Low"}
+        ]
+    }
+};
+
 // Initialize MediaPipe Hands
 const hands = new Hands({
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -42,6 +95,160 @@ hands.setOptions({
     minDetectionConfidence: 0.6,
     minTrackingConfidence: 0.5
 });
+
+// Initialize chatbot
+function initChatbot() {
+    chatbotButton.addEventListener('click', toggleChatWindow);
+    closeChatBtn.addEventListener('click', closeChatWindow);
+    sendMessageBtn.addEventListener('click', sendMessage);
+    
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // Add event listeners to suggestion chips
+    const chips = suggestionChips.querySelectorAll('.chip');
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const query = chip.getAttribute('data-query');
+            userInput.value = query;
+            sendMessage();
+        });
+    });
+}
+
+// Toggle chat window visibility
+function toggleChatWindow() {
+    if (chatWindow.style.display === 'flex') {
+        closeChatWindow();
+    } else {
+        openChatWindow();
+    }
+}
+
+// Open chat window
+function openChatWindow() {
+    chatWindow.style.display = 'flex';
+    userInput.focus();
+}
+
+// Close chat window
+function closeChatWindow() {
+    chatWindow.style.display = 'none';
+}
+
+// Send message function
+function sendMessage() {
+    const message = userInput.value.trim();
+    if (message === '') return;
+
+    // Add user message to chat
+    addMessage(message, 'user');
+    userInput.value = '';
+
+    // Process the message and generate response
+    setTimeout(() => {
+        const response = generateResponse(message);
+        addMessage(response, 'bot');
+    }, 500);
+}
+
+// Add message to chat
+function addMessage(text, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+    
+    if (sender === 'bot' && text.includes('<div')) {
+        messageDiv.innerHTML = text;
+    } else {
+        messageDiv.textContent = text;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Generate response based on user query
+function generateResponse(query) {
+    query = query.toLowerCase();
+    
+    if (query.includes('bed') || query.includes('icu') || query.includes('emergency')) {
+        return `
+            <div class="info-card">
+                <h4>Bed Availability</h4>
+                <p><strong>Total Beds:</strong> ${hospitalData.beds.total}</p>
+                <p><strong>Available Beds:</strong> ${hospitalData.beds.available}</p>
+                <p><strong>Occupied Beds:</strong> ${hospitalData.beds.occupied}</p>
+            </div>
+            <div class="info-card">
+                <h4>ICU Beds</h4>
+                <p><strong>Total ICU:</strong> ${hospitalData.beds.icu.total}</p>
+                <p><strong>Available ICU:</strong> ${hospitalData.beds.icu.available}</p>
+                <p><strong>Occupied ICU:</strong> ${hospitalData.beds.icu.occupied}</p>
+            </div>
+            <div class="info-card">
+                <h4>Emergency Beds</h4>
+                <p><strong>Total Emergency:</strong> ${hospitalData.beds.emergency.total}</p>
+                <p><strong>Available Emergency:</strong> ${hospitalData.beds.emergency.available}</p>
+                <p><strong>Occupied Emergency:</strong> ${hospitalData.beds.emergency.occupied}</p>
+            </div>
+        `;
+    } 
+    else if (query.includes('doctor') || query.includes('doc')) {
+        let departmentsHTML = '';
+        for (const [dept, data] of Object.entries(hospitalData.doctors.departments)) {
+            departmentsHTML += `
+                <div class="info-card">
+                    <h4>${dept}</h4>
+                    <p><strong>Total Doctors:</strong> ${data.total}</p>
+                    <p><strong>Available:</strong> ${data.available}</p>
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="info-card">
+                <h4>Doctors Summary</h4>
+                <p><strong>Total Doctors:</strong> ${hospitalData.doctors.total}</p>
+                <p><strong>Available Doctors:</strong> ${hospitalData.doctors.available}</p>
+            </div>
+            ${departmentsHTML}
+        `;
+    }
+    else if (query.includes('medicine') || query.includes('medical') || query.includes('drug') || query.includes('pharma') || query.includes('stock')) {
+        let criticalHTML = hospitalData.medicine.critical.map(item => 
+            `<p><strong>${item.name}:</strong> ${item.stock}</p>`
+        ).join('');
+        
+        let lowStockHTML = hospitalData.medicine.lowStock.map(item => 
+            `<p><strong>${item.name}:</strong> ${item.stock}</p>`
+        ).join('');
+        
+        return `
+            <div class="info-card">
+                <h4>Medicine Stock</h4>
+                <p><strong>Total Medicines in Stock:</strong> ${hospitalData.medicine.inStock}</p>
+            </div>
+            <div class="info-card">
+                <h4>Critical Medicines</h4>
+                ${criticalHTML}
+            </div>
+            <div class="info-card">
+                <h4>Low Stock Alert</h4>
+                ${lowStockHTML}
+            </div>
+        `;
+    }
+    else if (query.includes('hello') || query.includes('hi') || query.includes('hey')) {
+        return "Hello! I'm your hospital assistant. I can provide information about bed availability, doctors, and medical supplies.";
+    }
+    else {
+        return "I'm not sure I understand. I can provide information about bed availability, doctors, and medical supplies. Please ask about one of these.";
+    }
+}
 
 // Set up camera
 function setupCamera() {
@@ -250,6 +457,7 @@ window.addEventListener('load', async () => {
         model = await cocoSsd.load();
         console.log("Model loaded successfully");
         setupCamera();
+        initChatbot(); // Initialize the chatbot
     } catch (err) {
         console.error("Initialization error:", err);
         alert("Failed to initialize the application. Please check console for details.");
