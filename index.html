@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c3e50">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -42,15 +43,47 @@
         
         <button id="report-btn">Send Manual Email Report</button>
     </div>
+
+    <!-- Chatbot Container -->
+    <div class="chatbot-container">
+        <div class="chatbot-button" id="chatbot-button">
+            <i class="fas fa-hospital-alt"></i>
+            <div class="notification-badge">3</div>
+        </div>
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <span>Hospital Assistant</span>
+                <i class="fas fa-times" id="close-chat"></i>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    Hello! I'm your hospital assistant. I can provide real-time information about bed availability, doctors, and medical supplies.
+                </div>
+                <div class="message bot-message">
+                    How can I help you today?
+                </div>
+            </div>
+            <div class="suggestion-chips" id="suggestion-chips">
+                <div class="chip" data-query="beds available">Beds Available</div>
+                <div class="chip" data-query="doctors available">Doctors Available</div>
+                <div class="chip" data-query="medical stock">Medical Stock</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Type your question...">
+                <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("service-worker.js")
-        .then((reg) => console.log("Service Worker registered:", reg))
-        .catch((err) => console.error("Service Worker failed:", err));
-    });
-  }
-</script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker
+                .register("service-worker.js")
+                .then((reg) => console.log("Service Worker registered:", reg))
+                .catch((err) => console.error("Service Worker failed:", err));
+            });
+        }
+    </script>
 </body>
 </html>
