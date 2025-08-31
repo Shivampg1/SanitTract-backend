@@ -1,10 +1,11 @@
-const CACHE_NAME = "sanittrack-cache-v1";
+const CACHE_NAME = "sanittrack-cache-v2";
 const urlsToCache = [
   "./",
   "./index.html",
   "./style.css",
   "./script.js",
-  "./manifest.json"
+  "./manifest.json",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 ];
 
 // Install Service Worker
@@ -37,4 +38,3 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
-
