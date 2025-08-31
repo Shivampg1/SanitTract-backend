@@ -1,4 +1,3 @@
-
 {
   "name": "SanitTrack - Hospital Bed Monitoring",
   "short_name": "SanitTrack",
@@ -18,5 +17,6 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "description": "AI-powered hospital bed cleanliness monitoring system with hospital information chatbot"
 }
